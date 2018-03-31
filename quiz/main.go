@@ -3,14 +3,19 @@ package main
 import (
 	"bufio"
 	"encoding/csv"
+	"flag"
 	"fmt"
 	"io"
 	"os"
+	"strconv"
 )
 
 func main() {
+	problemsFilePath := flag.String("csv", "problems.csv", "filepath to problems csv file")
+	flag.Parse()
+
 	// read in default csv file problems.csv
-	problemsCsv, err := os.Open("./problems.csv")
+	problemsCsv, err := os.Open(*problemsFilePath)
 	if err != nil {
 		panic(err)
 	}
@@ -33,13 +38,13 @@ func main() {
 		problem := record[0]
 		correctAnswer := record[1]
 
-		// TODO prompt the problem and read input
-		fmt.Print(problem + ": ")
+		// prompt the problem and read input
+		fmt.Print("#" + strconv.Itoa(numQuestions) + ": " + problem + " = ")
 		answer, _ := stdInReader.ReadString('\n')
 		// knock off the newline
 		answer = answer[:len(answer)-1]
 
-		// TODO compare input to answer and move on to next problem
+		// compare input to answer and move on to next problem
 		numQuestions++
 		if answer == correctAnswer {
 			numCorrect++
@@ -47,6 +52,5 @@ func main() {
 	}
 
 	fmt.Println("")
-	fmt.Println("Number Correct =", numCorrect)
-	fmt.Println("Number Wrong = ", numQuestions-numCorrect)
+	fmt.Println("You scored", numCorrect, "out of", numQuestions)
 }
