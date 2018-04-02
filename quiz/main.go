@@ -33,8 +33,7 @@ func main() {
 	stdInReader.ReadString('\n')
 
 	// start timer
-	t := make(chan int)
-	go startTimer(*limit, t)
+	t := time.NewTimer(time.Duration(*limit) * time.Second)
 
 	numQuestions := len(problems)
 	numCorrect := startQuiz(problems, t)
@@ -43,12 +42,7 @@ func main() {
 	fmt.Println("You scored", numCorrect, "out of", numQuestions)
 }
 
-func startTimer(limit int, t chan int) {
-	time.Sleep(time.Duration(limit) * time.Second)
-	t <- limit
-}
-
-func startQuiz(problems []problem, t chan int) int {
+func startQuiz(problems []problem, t *time.Timer) int {
 	var numCorrect int
 
 	// start quiz
@@ -68,7 +62,7 @@ func startQuiz(problems []problem, t chan int) int {
 			if answer == problem.answer {
 				numCorrect++
 			}
-		case <-t:
+		case <-t.C:
 			return numCorrect
 		}
 	}
