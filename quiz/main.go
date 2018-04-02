@@ -23,7 +23,8 @@ func main() {
 
 	problems, err := readProblems(*problemsFilePath)
 	if err != nil {
-		panic(err)
+		fmt.Printf("Failed to open the CSV file: %s\n", *problemsFilePath)
+		os.Exit(1)
 	}
 
 	stdInReader := bufio.NewReader(os.Stdin)
@@ -53,7 +54,7 @@ func startQuiz(problems []problem, t chan int) int {
 	// start quiz
 	for i, problem := range problems {
 		// prompt the problem and read input
-		fmt.Print("#" + strconv.Itoa(i) + ": " + problem.question + " = ")
+		fmt.Print("#" + strconv.Itoa(i+1) + ": " + problem.question + " = ")
 
 		a := make(chan string)
 		go getAnswer(problem, a)
@@ -85,7 +86,7 @@ func readProblems(problemsFilePath string) ([]problem, error) {
 	// read in csv file problems.csv
 	problemsCsv, err := os.Open(problemsFilePath)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 	// iterate through and get problems and answers
 	csvReader := csv.NewReader(problemsCsv)
