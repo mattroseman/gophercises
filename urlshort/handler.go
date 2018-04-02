@@ -43,24 +43,40 @@ func MapHandler(pathsToUrls map[string]string, fallback http.Handler) http.Handl
 // See MapHandler to create a similar http.HandlerFunc via
 // a mapping of paths to urls.
 func YAMLHandler(yml []byte, fallback http.Handler) (http.HandlerFunc, error) {
-	// parse yml into a slice of redirect types
-	var redirects []redirect
-	err := yaml.Unmarshal(yml, &redirects)
+	ymlMap, err := redirectYAMLToMap(yml)
 	if err != nil {
 		return nil, err
-	}
-
-	// turn the slice of redirect types into a map
-	ymlMap := make(map[string]string)
-	for _, r := range redirects {
-		ymlMap[r.Path] = r.URL
 	}
 
 	// call MapHandler with this new map made from the YAML
 	return MapHandler(ymlMap, fallback), nil
 }
 
+// redirect represents a URL redirect. Path is the input and it maps to URL
 type redirect struct {
 	Path string
 	URL  string
+}
+
+// redirectYAMLToMap takes a slice of bytes representing a YAML document, and converts it to
+// a map of path strings to the url redirect string
+// YAML is expected to be in the format:
+//
+//     - path: /some-path
+//       url: https://www.some-url.com/demo
+func redirectYAMLToMap(yml []byte) (ymlMap map[string]string, err error) {
+	// parse yml into a slice of redirect types
+	var redirects []redirect
+	err = yaml.Unmarshal(yml, &redirects)
+	if err != nil {
+		return
+	}
+
+	ymlMap = make(map[string]string)
+	// turn the slice of redirect types into a map
+	for _, r := range redirects {
+		ymlMap[r.Path] = r.URL
+	}
+
+	return
 }
