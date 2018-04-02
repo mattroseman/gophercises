@@ -26,10 +26,11 @@ func MapHandler(pathsToUrls map[string]string, fallback http.Handler) http.Handl
 			// if this url path is a key in pathsToUrls, redirect to its value
 			fmt.Printf("%s redirected to %s\n", r.URL, redirect)
 			http.Redirect(w, r, redirect, 303)
-		} else {
-			// if the url path isn't in the pathsToUrls map, use the fallback handler
-			fallback.ServeHTTP(w, r)
+			return
 		}
+
+		// if the url path isn't in the pathsToUrls map, use the fallback handler
+		fallback.ServeHTTP(w, r)
 	}
 }
 
