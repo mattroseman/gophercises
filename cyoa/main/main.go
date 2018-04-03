@@ -36,9 +36,12 @@ func main() {
 // choose your own adventure story.
 func NewStoryHandler(arcs story.Arcs) http.HandlerFunc {
 	mux := http.NewServeMux()
+
+	// for each arc title, create a new handler that loads the template with the arc details
 	for arcTitle, arc := range arcs {
 		mux.HandleFunc(fmt.Sprintf("/%s", arcTitle), NewArcHandler(arc))
 	}
+	// any unmatched endpoints should load the intro arc
 	mux.HandleFunc("/", NewArcHandler(arcs["intro"]))
 
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -49,7 +52,6 @@ func NewStoryHandler(arcs story.Arcs) http.HandlerFunc {
 // NewArcHandler creates a new handler func that loads a webpage for a given arc
 func NewArcHandler(arc story.Arc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// TODO hand option links, possibly go to another endpoint on the server
 		t, err := template.ParseFiles("index.html")
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
