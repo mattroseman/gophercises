@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Choose Your Own Adventure</title>
+  </head>
+
+  <body>
+    <div class="title">
+      <h1>{{.Title}}</h1>
+    </div>
+
+    <div class="story">
+      {{ range .Paragraphs}}
+        <div class="paragraph">
+          <p>{{.}}</p>
+        </div>
+      {{end}}
+    </div>
+
+    {{ if .Options}}
+      <h3>Continue Story . . .</h3>
+      <ul class="options">
+        {{ range .Options }}
+          <li>
+            <a href="/{{.NextArc}}">
+              {{.Text}}
+            </a>
+          </li>
+        {{end}}
+      </ul>
+    {{else}}
+      <h3>Fin</h3>
+    {{end}}
+  </body>
+</html>
