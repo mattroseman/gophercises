@@ -39,6 +39,7 @@ func NewStoryHandler(arcs story.Arcs) http.HandlerFunc {
 	for arcTitle, arc := range arcs {
 		mux.HandleFunc(fmt.Sprintf("/%s", arcTitle), NewArcHandler(arc))
 	}
+	mux.HandleFunc("/", NewArcHandler(arcs["intro"]))
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		mux.ServeHTTP(w, r)
